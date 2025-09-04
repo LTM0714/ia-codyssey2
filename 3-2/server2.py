@@ -104,7 +104,7 @@ class ChatServer:
         with self.lock:
             dead = []  # 연결 끊긴 클라이언트 목록
             for conn in self.clients:
-                # 특정 대상이 지정되어 있으면 그 대상만 전송
+                # target_conn이 None이면 전체, 아니면 특정 클라이언트에게만 전송
                 if target_conn is None or conn == target_conn:
                     try:
                         conn.sendall(data)
