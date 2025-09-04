@@ -17,16 +17,16 @@ class ChatServer:
         self.server_socket.bind((self.host, self.port))             # 서버 주소/포트 바인딩
         self.server_socket.listen(3)                                # 최대 3개의 클라이언트 대기
 
-        print(f'서버 시작: {self.host}:{self.port}')
+        print('%d번 포트로 접속 대기중...'%self.port)
 
         self.server_socket.settimeout(1.0)  # accept()가 1초마다 타임아웃되도록 설정
 
         try:
             while True:
                 try:
-                    conn, addr = self.server_socket.accept()
+                    connectionSock, addr = self.server_socket.accept()
                     # 클라이언트 처리용 스레드 생성
-                    thread = threading.Thread(target=self.handle_client, args=(conn, addr), daemon=True)
+                    thread = threading.Thread(target=self.handle_client, args=(connectionSock, addr), daemon=True)
                     thread.start()
                 except timeout:
                     continue
@@ -43,6 +43,8 @@ class ChatServer:
             nickname = conn.recv(1024).decode('utf-8').strip()
             if not nickname:
                 nickname = f'{addr[0]}:{addr[1]}'   # 닉네임이 없으면 IP:포트로 설정
+
+            nickname = self.get_unique_nickname(nickname) # 중복 닉네임 처리
 
             # clients 딕셔너리에 추가 (동기화)
             # 여러 클라이언트가 동시에 접속하거나 종료할 때 문제 방지
@@ -113,6 +115,18 @@ class ChatServer:
             # 연결 끊긴 소켓 제거, 없으면 None 반환
             for conn in dead:
                 self.clients.pop(conn, None)
+
+
+    # 중복 닉네임 처리
+    def get_unique_nickname(self, nickname):
+        original = nickname
+        count = 1
+        with self.lock:
+            existing_name = set(self.clients.values())
+            while nickname in existing_name:
+                count += 1
+                nickname = f"{original}({count})"
+        return nickname
 
 
     # 서버 종료 시 모든 소켓 정리

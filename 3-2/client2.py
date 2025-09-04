@@ -50,7 +50,7 @@ class ChatClient:
                 data = self.sock.recv(1024)
             except OSError:
                 break
-            if not data:    # 서버가 종료되었거나 연결이 끊어짐
+            if not data:
                 break
             sys.stdout.write(data.decode('utf-8'))     # 표준 출력
             sys.stdout.flush()               # 출력 버퍼 비우기
