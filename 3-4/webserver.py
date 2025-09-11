@@ -1,21 +1,19 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import http.client
+from urllib.request import urlopen
 import json
 
 
 def get_ip_location(ip):
     # ip-api.com 무료 API 활용
     try:
-        conn = http.client.HTTPConnection("ip-api.com", timeout=5)
-        conn.request("GET", f"/json/{ip}?fields=status,country,regionName,city,query")
-        response = conn.getresponse()
-        if response.status == 200:
-            data = response.read().decode("utf-8")
-            return json.loads(data)
+        with urlopen(f'http://ip-api.com/json/{ip}') as response:
+            data = json.loads(response.read().decode())
+            if data['status'] == 'success':
+                return f"{data['country']} {data['regionName']} {data['city']}"
+            else:
+                return '위치 정보를 찾을 수 없음 (로컬호스트 등)'
     except Exception as e:
-        return {"status": "fail", "message": str(e)}
-    return {"status": "fail"}
-
+        return f'위치 조회 실패: {e}'
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -38,16 +36,11 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         # index.html 내용 전송
         self.wfile.write(content.encode('utf-8'))
-
-        client_ip = self.client_address[0]
-
+        
         # 위치 정보 조회 (로컬호스트는 조회 불가)
-        if client_ip != '127.0.0.1':
-            location = get_ip_location(client_ip)
-            if location:
-                print(f"위치 정보: {location['country']} {location['regionName']} {location['city']}")
-        else:
-            print('[위치 정보] 조회 실패 (로컬호스트)')
+        client_ip = self.client_address[0]
+        location_info = get_ip_location(client_ip)
+        print(f'위치 정보: {location_info}')
 
     def do_POST(self):
         print('POST 요청이 들어왔습니다.')
