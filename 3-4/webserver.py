@@ -1,4 +1,4 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import http.client
 import json
 
@@ -54,10 +54,16 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 def run():
-    httpd = HTTPServer(('127.0.0.1', 8080), MyHandler)
+    # httpd = HTTPServer(('0.0.0.0', 8080), MyHandler) # 단일 접속 처리
+    httpd = ThreadingHTTPServer(('0.0.0.0', 8080), MyHandler) # 다중 접속 처리
     print('Server Start')
-    httpd.serve_forever()
-    print('Server End')
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print('Server Interrupted')
+    finally:
+        httpd.server_close()
+        print('Server End')
 
 
 if __name__ == '__main__':
