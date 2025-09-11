@@ -3,20 +3,30 @@ from urllib.request import urlopen
 import json
 
 
-def get_ip_location(ip):
-    # ip-api.com 무료 API 활용
+def get_ip_location(ip=None):
+    # ip-api.com 무료 API 활용   
     try:
-        with urlopen(f'http://ip-api.com/json/{ip}') as response:
+        if ip:
+            url = f'http://ip-api.com/json/{ip}'
+        else:
+            url = 'http://ip-api.com/json/'  # 공인 IP 기준
+        with urlopen(url) as response:
             data = json.loads(response.read().decode())
-            if data['status'] == 'success':
-                return f"{data['country']} {data['regionName']} {data['city']}"
+            if data.get('status') == 'success':
+                return f"{data.get('country')} {data.get('regionName')} {data.get('city')}"
             else:
-                return '위치 정보를 찾을 수 없음 (로컬호스트 등)'
+                return '위치 정보를 찾을 수 없음'
     except Exception as e:
         return f'위치 조회 실패: {e}'
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # favicon 요청은 로그하지 않고 무시
+        if self.path == '/favicon.ico':
+            self.send_response(204)
+            self.end_headers()
+            return None
+        
         print('GET 요청이 들어왔습니다.')
 
         # index.html 파일 읽기
@@ -38,8 +48,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(content.encode('utf-8'))
         
         # 위치 정보 조회 (로컬호스트는 조회 불가)
-        client_ip = self.client_address[0]
-        location_info = get_ip_location(client_ip)
+        location_info = get_ip_location()
         print(f'위치 정보: {location_info}')
 
     def do_POST(self):
