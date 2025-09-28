@@ -19,6 +19,11 @@ def main(user_id, user_pw):
 
     input('로그인 완료 후 Enter 키를 누르세요...')
 
+    nickname = driver.find_element(By.CSS_SELECTOR, '[class*="MyView-module__nickname"]').text
+    email = driver.find_element(By.XPATH, '//*[@id="account"]/div[1]/div/div/div[2]').text
+    print(f'로그인된 닉네임: {nickname}')
+    print(f'이메일 주소: {email}\n')
+
     # 네이버 메일 페이지로 이동
     driver.get('https://mail.naver.com/')
     time.sleep(3)
