@@ -18,6 +18,7 @@ def main(user_id, user_pw):
     driver.get('https://nid.naver.com/nidlogin.login')
     time.sleep(2)
 
+    # ClipBoard 복사/붙이기
     driver.find_element(By.XPATH, '//*[@id="id"]').click()
     pyperclip.copy(user_id)
     actions = ActionChains(driver)
