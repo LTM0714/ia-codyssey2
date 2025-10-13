@@ -16,7 +16,7 @@ def send_email(sender, password, receivers, subject, body, files_path=None):
         msg['From'] = sender
         msg['To'] = ','.join(receivers) if isinstance(receivers, list) else receivers # 여러 명에게 보낼 때 ,로 구분
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body, 'html'))
 
         # 첨부파일 추가
         for file_path in files_path or []:  # None이거나 빈 값일 때도 에러 안 나도록 처리
@@ -24,14 +24,14 @@ def send_email(sender, password, receivers, subject, body, files_path=None):
                 with open(file_path, 'rb') as f:
                     file_data = MIMEBase('application', 'octet-stream') # 모든 종류의 바이너리 파일 가능
                     # file_data = MIMIEBase('application', 'pdf')       # PDF 파일만 가능
-                    file_data.set_payload(f.read())                     # 첨부할 파일 읽기
+                    file_data.set_payload(f.read())                     # 파일 내용을 MIMEBase 객체에 채움
                     encoders.encode_base64(file_data)            # 바이너리 데이터를 텍스트로 인코딩
-                    # 파일이름 지정된 report header를 추가
+                    # "이건 첨부파일" 헤더 추가
                     file_data.add_header(
                         'Content-Disposition',
-                        f'attachment; filename={os.path.basename(file_path)}',
+                        f'attachment; filename={os.path.basename(file_path)}'
                     )
-                    msg.attach(file_data)
+                    msg.attach(file_data)           # 메일 컨테이너에 첨부파일 추가
             else:
                 print(f'첨부 파일이 없습니다: {file_path}')
                 continue
@@ -41,6 +41,15 @@ def send_email(sender, password, receivers, subject, body, files_path=None):
             server.starttls() # Transport Layer Security (보안 처리)
             server.login(sender, password) # SMTP 서버에 로그인
             server.sendmail(sender, receivers, msg.as_string()) # msg.as_string() : 메일 컨테이너를 문자열로 변환
+            """
+            server.starttls()
+            server.login(user=sender, password=password)
+            server.sendmail(
+                from_addr=sender,
+                to_addrs='email@naver.com',
+                msg="Subject:Hello\n\nThis is the body of my email"
+            )
+            """
         
         print('메일이 발송되었습니다')
         return True
@@ -57,10 +66,18 @@ def send_email(sender, password, receivers, subject, body, files_path=None):
 
 if __name__ == '__main__':
     sender_email = 'lim2309043@gmail.com' # 보내는 Gmail 주소
-    sender_password = os.getenv('GMAIL_APP_PASSWORD') or getpass.getpass('Password (App Password): ') # 패스워드 입력 (앱 비밀번호 권장)
+    sender_password = os.getenv('GMAIL_APP_PASSWORD') or getpass.getpass('Password (App Password): ') # 패스워드 입력 (앱 비밀번호)
     receiver_email = ['dlaxoals14@naver.com', 'dlaxoals54@m365.dongyang.ac.kr'] # 받는 사람 이메일
     subject = '파이썬으로 이메일 보내기 제목 테스트'
-    body = '안녕하세요, Python SMTP 테스트 메일입니다.'
+    body = """\
+    <html>
+      <body>
+        <h2 style="color:#4CAF50;">안녕하세요!</h2>
+        <p>이메일 본문이 <b>HTML 형식</b>으로 전송되었습니다.<br>
+        <a href="https://mail.google.com">Gmail 열기</a></p>
+      </body>
+    </html>
+    """
     files = ['3-11/test.txt', '3-11/test2.pdf']  # 첨부파일 경로 (없으면 None)
 
     send_email(sender_email, sender_password, receiver_email, subject, body, files)
