@@ -69,7 +69,7 @@ if __name__ == '__main__':
     sender_password = os.getenv('GMAIL_APP_PASSWORD') or getpass.getpass('Password (App Password): ') # 패스워드 입력 (앱 비밀번호)
     receiver_email = ['dlaxoals14@naver.com', 'dlaxoals54@m365.dongyang.ac.kr'] # 받는 사람 이메일
     subject = '파이썬으로 이메일 보내기 제목 테스트'
-    body = '안녕하세요 파이썬으로 이메일을 보내는 테스트입니다.'
+    body = '안녕하세요! 파이썬으로 이메일을 보내는 테스트입니다.'
     files = ['3-11/test.txt', '3-11/test2.pdf']  # 첨부파일 경로 (없으면 None)
 
     send_email(sender_email, sender_password, receiver_email, subject, body, files)
