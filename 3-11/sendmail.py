@@ -16,7 +16,7 @@ def send_email(sender, password, receivers, subject, body, files_path=None):
         msg['From'] = sender
         msg['To'] = ','.join(receivers) if isinstance(receivers, list) else receivers # 여러 명에게 보낼 때 ,로 구분
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'html'))
+        msg.attach(MIMEText(body, 'plain'))
 
         # 첨부파일 추가
         for file_path in files_path or []:  # None이거나 빈 값일 때도 에러 안 나도록 처리
@@ -69,15 +69,7 @@ if __name__ == '__main__':
     sender_password = os.getenv('GMAIL_APP_PASSWORD') or getpass.getpass('Password (App Password): ') # 패스워드 입력 (앱 비밀번호)
     receiver_email = ['dlaxoals14@naver.com', 'dlaxoals54@m365.dongyang.ac.kr'] # 받는 사람 이메일
     subject = '파이썬으로 이메일 보내기 제목 테스트'
-    body = """\
-    <html>
-      <body>
-        <h2 style="color:#4CAF50;">안녕하세요!</h2>
-        <p>이메일 본문이 <b>HTML 형식</b>으로 전송되었습니다.<br>
-        <a href="https://mail.google.com">Gmail 열기</a></p>
-      </body>
-    </html>
-    """
+    body = '안녕하세요 파이썬으로 이메일을 보내는 테스트입니다.'
     files = ['3-11/test.txt', '3-11/test2.pdf']  # 첨부파일 경로 (없으면 None)
 
     send_email(sender_email, sender_password, receiver_email, subject, body, files)
