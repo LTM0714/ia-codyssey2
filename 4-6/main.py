@@ -11,7 +11,11 @@ from domain.question.question_router import router as question_router
 models.Base.metadata.create_all(bind=engine)
 
 
-app = FastAPI()
+app = FastAPI(
+    title='화성 기지 연구 기록 시스템',
+    description='연구 결과 및 재고 관리를 위한 게시판 API',
+    version='1.0.0'
+)
 
 # 단순 테스터용 라우터(서버 정상적으로 작동하는지)
 @app.get('/')
