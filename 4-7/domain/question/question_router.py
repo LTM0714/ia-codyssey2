@@ -9,8 +9,22 @@ from domain.question.dependencies import get_question_service
 
 router = APIRouter(prefix='/api/question')
 
+# 1. 전체 질문 목록 조회
+@router.get('/', response_model=list[QuestionViewResponse])
+def question_list(
+    service: QuestionService = Depends(get_question_service)
+):
+    return service.get_questions()
 
-# 새로운 질문 생성
+# 2. 개별 질문 조회
+@router.get('/{question_id}', response_model=QuestionViewResponse)
+def get_single_question(
+        question_id: int,
+        service: QuestionService = Depends(get_question_service)
+):
+    return service.get_question(question_id)
+
+# 3. 새로운 질문 생성
 @router.post(
         '/',
         response_model=QuestionViewResponse,
@@ -21,18 +35,3 @@ def create_question(
     service: QuestionService = Depends(get_question_service)
 ):
     return service.create_question(question_dto)
-
-# 전체 질문 목록 조회
-@router.get('/', response_model=list[QuestionViewResponse])
-def question_list(
-    service: QuestionService = Depends(get_question_service)
-):
-    return service.get_questions()
-
-# 개별 질문 조회
-@router.get('/{question_id}', response_model=QuestionViewResponse)
-def get_single_question(
-        question_id: int,
-        service: QuestionService = Depends(get_question_service)
-):
-    return service.get_question(question_id)
