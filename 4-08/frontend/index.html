@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질문 관리 시스템</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>질문 관리 시스템</h1>
+            <button class="btn btn-primary" onclick="showCreateForm()">새 질문 작성</button>
+        </header>
+
+        <main>
+            <!-- 질문 목록 -->
+            <section id="question-list-section">
+                <h2>질문 목록</h2>
+                <div id="question-list" class="question-list">
+                    <p class="loading">로딩 중...</p>
+                </div>
+            </section>
+
+            <!-- 질문 작성/수정 폼 -->
+            <section id="question-form-section" class="hidden">
+                <h2 id="form-title">새 질문 작성</h2>
+                <form id="question-form" onsubmit="handleSubmit(event)">
+                    <input type="hidden" id="question-id" value="">
+                    
+                    <div class="form-group">
+                        <label for="subject">제목</label>
+                        <input type="text" id="subject" required placeholder="질문 제목을 입력하세요">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">내용</label>
+                        <textarea id="content" required rows="5" placeholder="질문 내용을 입력하세요"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">취소</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 질문 상세 보기 -->
+            <section id="question-detail-section" class="hidden">
+                <h2>질문 상세</h2>
+                <div id="question-detail" class="question-detail">
+                    <!-- 상세 내용이 여기에 표시됩니다 -->
+                </div>
+                <div class="detail-actions">
+                    <button class="btn btn-primary" onclick="editQuestion()">수정</button>
+                    <button class="btn btn-danger" onclick="deleteQuestion()">삭제</button>
+                    <button class="btn btn-secondary" onclick="hideDetail()">목록으로</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
