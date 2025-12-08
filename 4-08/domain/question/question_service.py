@@ -19,7 +19,7 @@ class QuestionService:
                 status_code=404, 
                 detail=f'Question with id {question_id} not found'
             )
-    
+        return question
     
     # 3. 새로운 질문 생성
     def create_question(self, question_data: QuestionCreateRequest):
