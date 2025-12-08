@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from models import Question
 from domain.question.question_dto import QuestionCreateRequest
 
@@ -12,7 +13,13 @@ class QuestionService:
     
     # 2. id로 개별 질문 조회
     def get_question(self, question_id: int):
-        return self.db.query(Question).filter(Question.id == question_id).first()
+        question = self.db.query(Question).filter(Question.id == question_id).first()
+        if not question:
+            raise HTTPException(
+                status_code=404, 
+                detail=f'Question with id {question_id} not found'
+            )
+    
     
     # 3. 새로운 질문 생성
     def create_question(self, question_data: QuestionCreateRequest):
