@@ -3,10 +3,11 @@ FastAPI 실행 진입점(앱을 시작하는 파일, 라우터 등록)
 '''
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 import models
 from domain.question.question_router import router as question_router
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 # 모델로부터 테이블 생성(Alembic 사용 전 초기 개발용)
 models.Base.metadata.create_all(bind=engine)
@@ -18,15 +19,6 @@ app = FastAPI(
     version='1.0.0'
 )
 
-# CORS 설정 (index.html이 fetch할 때 꼭 필요)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],       # 개발환경에서는 모든 도메인 허용
-    allow_credentials=True,
-    allow_methods=["*"],       # OPTIONS 포함 모든 메서드 허용
-    allow_headers=["*"],       # 모든 헤더 허용
-)
-
 # 단순 테스터용 라우터(서버 정상적으로 작동하는지)
 @app.get('/')
 def read_root():
@@ -34,3 +26,12 @@ def read_root():
 
 # 라우터 등록
 app.include_router(question_router)
+
+app.mount("/static", StaticFiles(directory="frontend", html=True), name="frontend")
+
+# 정적 파일 제공 (index.html)
+@app.get('/index', response_class=HTMLResponse)
+def get_index():
+    with open('frontend/index.html', 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)

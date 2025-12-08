@@ -16,7 +16,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base # ORM을 저장할 임시 메모리 공간, Mapping을 위한 Base 클래스 생성
 # from contextlib import contextmanager
 
-engine = create_engine('sqlite:///./board.db', echo=True) # 1. DB 엔진 생성(DB와 실제로 연결하는 통로)
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./board.db' # SQLite DB 파일 경로 지정
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, 
+    connect_args={"check_same_thread": False}
+) # 1. DB 엔진 생성(DB와 실제로 연결하는 통로)
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine) # 2. 세션 생성, DB와 통신할 수 있는 객체가 만들어짐
 
 Base = declarative_base() # 3. ORM 모델이 상속받아야 하는 Base 클래스 정의
