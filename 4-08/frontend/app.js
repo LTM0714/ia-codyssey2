@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000/api/question';
+const API_BASE_URL = `${window.location.origin}/api/question`;
 
 // 전역 상태
 let currentQuestionId = null;

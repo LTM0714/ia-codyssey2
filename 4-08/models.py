@@ -1,6 +1,7 @@
 '''
 ORM 모델 정의
 이것을 실행시켜 실제 db에 데이터를 생성하기 위해선 Alembic 데이터베이스 마이그레이션 도구 사용
+마이그레이션 : 데이터베이스 스키마를 버전 관리하면서 변경하는 것
 '''
 
 from sqlalchemy import Column, Integer, String, DateTime

@@ -8,6 +8,7 @@ import models
 from domain.question.question_router import router as question_router
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 # 모델로부터 테이블 생성(Alembic 사용 전 초기 개발용)
 models.Base.metadata.create_all(bind=engine)
@@ -26,6 +27,19 @@ def read_root():
 
 # 라우터 등록
 app.include_router(question_router)
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # 정적 파일 제공 설정
 app.mount("/static", StaticFiles(directory="frontend", html=True), name="frontend")

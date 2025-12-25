@@ -1,11 +1,13 @@
 '''
 데이터 베이스 연결 관련 설정(SQLAlchemy 엔진, 세션 관리 등)
-pip install sqlalchemy
-pip install alembic, alembic init alembic
-alembic.ini 데이터베이스 설정 파일, sqlalchemy.url = 부분에 db url을 정의
+pip install sqlalchemy, alembic
+alembic init alembic
+alembic.ini 데이터베이스 설정 파일에서 sqlalchemy.url = {db url}, 예시: sqlite:///./MySecDB.db
 alembic revision --autogenerate -m "create question table"
 alembic upgrade head
 sqlite3 MySecDB.db, .tables, .schema question
+
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 반복되는 쿼리를 객체 단위로 생성해서 이를 해결하고자 ORM(Object Relational Mapping) 사용
 ORM: 객체와 관계형 데이터베이스의 데이터를 매핑해주는 기술
