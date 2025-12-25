@@ -27,6 +27,7 @@ def read_root():
 # 라우터 등록
 app.include_router(question_router)
 
+# 정적 파일 제공 설정
 app.mount("/static", StaticFiles(directory="frontend", html=True), name="frontend")
 
 # 정적 파일 제공 (index.html)
